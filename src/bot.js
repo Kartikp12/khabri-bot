@@ -5,7 +5,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const handleStart = require("./start");
 const handleHelp = require("./help");
 const handleAbout = require("./about");
-
+const handleAdd = require("./add");
 
 
 
@@ -24,6 +24,7 @@ console.log("Khabri is starting...");
 handleStart(bot);
 handleHelp(bot);
 handleAbout(bot);
+handleAdd(bot);
 
 bot.on("polling_error", (error) => {
   console.error("Telegram polling error:", error.message);
