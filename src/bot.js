@@ -1,6 +1,6 @@
 
 require("dotenv").config();
-
+require("./database");
 const TelegramBot = require("node-telegram-bot-api");
 const handleStart = require("./start");
 const handleHelp = require("./help");
