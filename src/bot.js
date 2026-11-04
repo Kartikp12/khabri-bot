@@ -2,6 +2,11 @@
 require("dotenv").config();
 
 const TelegramBot = require("node-telegram-bot-api");
+const handleStart = require("./start");
+
+
+
+
 
 const token = process.env.BOT_TOKEN;
 
@@ -14,6 +19,7 @@ const bot = new TelegramBot(token, {
 });
 
 console.log("Khabri is starting...");
+handleStart(bot);
 
 bot.on("polling_error", (error) => {
   console.error("Telegram polling error:", error.message);
