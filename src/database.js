@@ -1,3 +1,4 @@
+
 const Database = require("better-sqlite3");
 const path = require("path");
 
@@ -16,6 +17,41 @@ db.exec(`
   );
 `);
 
+// Add monitoring columns without deleting existing data
+const columns = db
+  .prepare("PRAGMA table_info(websites)")
+  .all()
+  .map((column) => column.name);
+
+if (!columns.includes("failure_count")) {
+  db.exec(`
+    ALTER TABLE websites
+    ADD COLUMN failure_count INTEGER NOT NULL DEFAULT 0
+  `);
+}
+
+if (!columns.includes("monitor_status")) {
+  db.exec(`
+    ALTER TABLE websites
+    ADD COLUMN monitor_status TEXT NOT NULL DEFAULT 'UNKNOWN'
+  `);
+}
+
+if (!columns.includes("last_checked_at")) {
+  db.exec(`
+    ALTER TABLE websites
+    ADD COLUMN last_checked_at DATETIME
+  `);
+}
+
+if (!columns.includes("down_since")) {
+  db.exec(`
+    ALTER TABLE websites
+    ADD COLUMN down_since DATETIME
+  `);
+}
+
 console.log("Khabri database connected successfully.");
+console.log("Monitoring columns verified successfully.");
 
 module.exports = db;
