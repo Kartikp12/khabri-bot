@@ -11,9 +11,25 @@ function startMonitoring(bot) {
   cron.schedule("*/5 * * * *", async () => {
     console.log("Running scheduled website checks...");
 
+    try {
+      // Delete monitoring history older than 24 hours
+      const cleanup = db.prepare(`
+        DELETE FROM website_history
+        WHERE checked_at < datetime('now', '-24 hours')
+      `).run();
+
+      if (cleanup.changes > 0) {
+        console.log(
+          `Database cleanup: ${cleanup.changes} old history records deleted.`
+        );
+      }
+    } catch (error) {
+      console.error("Database cleanup error:", error.message);
+    }
+
     const websites = db
-    .prepare("SELECT * FROM websites WHERE is_paused = 0")
-    .all();
+      .prepare("SELECT * FROM websites WHERE is_paused = 0")
+      .all();
 
     for (const website of websites) {
       try {
@@ -22,21 +38,21 @@ function startMonitoring(bot) {
         const checkedAt = new Date().toISOString();
 
         db.prepare(`
-            INSERT INTO website_history (
-              website_id,
-              status,
-              status_code,
-              response_time,
-              checked_at
-            )
-            VALUES (?, ?, ?, ?, ?)
-          `).run(
-            website.id,
-            result.status,
-            result.statusCode ?? null,
-            result.responseTime,
-            checkedAt
-          );
+          INSERT INTO website_history (
+            website_id,
+            status,
+            status_code,
+            response_time,
+            checked_at
+          )
+          VALUES (?, ?, ?, ?, ?)
+        `).run(
+          website.id,
+          result.status,
+          result.statusCode ?? null,
+          result.responseTime,
+          checkedAt
+        );
 
         console.log(
           `Checked ${website.url}: ${result.status} (${result.responseTime} ms)`
@@ -45,7 +61,6 @@ function startMonitoring(bot) {
         // Successful website response
         if (result.status === "ONLINE") {
           const wasDown = website.monitor_status === "DOWN";
-
           const previousDownSince = website.down_since;
 
           db.prepare(`
