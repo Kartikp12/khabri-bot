@@ -9,6 +9,7 @@ const handleAdd = require("./add");
 const handleList = require("./list");
 const handleRemove = require("./remove");
 const handleStatus = require("./status");
+const startMonitoring = require("./monitor");
 
 
 
@@ -30,6 +31,7 @@ handleAdd(bot);
 handleList(bot);
 handleRemove(bot);
 handleStatus(bot);
+startMonitoring(bot);
 
 
 bot.on("polling_error", (error) => {
