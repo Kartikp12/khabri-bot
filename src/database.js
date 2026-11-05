@@ -51,6 +51,15 @@ if (!columns.includes("down_since")) {
   `);
 }
 
+if (!columns.includes("is_paused")) {
+    db.exec(`
+      ALTER TABLE websites
+      ADD COLUMN is_paused INTEGER NOT NULL DEFAULT 0
+    `);
+  }
+
+
+
 console.log("Khabri database connected successfully.");
 console.log("Monitoring columns verified successfully.");
 

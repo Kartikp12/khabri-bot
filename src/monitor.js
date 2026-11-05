@@ -12,8 +12,8 @@ function startMonitoring(bot) {
     console.log("Running scheduled website checks...");
 
     const websites = db
-      .prepare("SELECT * FROM websites")
-      .all();
+    .prepare("SELECT * FROM websites WHERE is_paused = 0")
+    .all();
 
     for (const website of websites) {
       try {
