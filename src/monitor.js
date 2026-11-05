@@ -21,6 +21,23 @@ function startMonitoring(bot) {
 
         const checkedAt = new Date().toISOString();
 
+        db.prepare(`
+            INSERT INTO website_history (
+              website_id,
+              status,
+              status_code,
+              response_time,
+              checked_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+          `).run(
+            website.id,
+            result.status,
+            result.statusCode ?? null,
+            result.responseTime,
+            checkedAt
+          );
+
         console.log(
           `Checked ${website.url}: ${result.status} (${result.responseTime} ms)`
         );

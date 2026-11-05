@@ -57,6 +57,22 @@ if (!columns.includes("is_paused")) {
       ADD COLUMN is_paused INTEGER NOT NULL DEFAULT 0
     `);
   }
+  // Create website monitoring history table
+db.exec(`
+    CREATE TABLE IF NOT EXISTS website_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      website_id INTEGER NOT NULL,
+      status TEXT NOT NULL,
+      status_code INTEGER,
+      response_time INTEGER,
+      checked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (website_id)
+        REFERENCES websites(id)
+        ON DELETE CASCADE
+    );
+  `);
+  
+  console.log("Website history table verified successfully.");
 
 
 
