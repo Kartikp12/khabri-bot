@@ -7,6 +7,7 @@ const handleHelp = require("./help");
 const handleAbout = require("./about");
 const handleAdd = require("./add");
 const handleList = require("./list");
+const handleRemove = require("./remove");
 
 
 
@@ -26,6 +27,7 @@ handleHelp(bot);
 handleAbout(bot);
 handleAdd(bot);
 handleList(bot);
+handleRemove(bot);
 
 bot.on("polling_error", (error) => {
   console.error("Telegram polling error:", error.message);
