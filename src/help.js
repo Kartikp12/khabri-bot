@@ -10,7 +10,8 @@ function handleHelp(bot) {
         "/start - Start the bot\n" +
         "/help - View all available commands\n" +
         "/about - Learn more about Khabri\n" +
-        "/clear - Clear messages sent by Khabri\n\n" +
+        "/clear - Clear messages sent by Khabri\n" +
+        "/reset - Permanently delete your Khabri account data\n\n" +
         "🌐 WEBSITE MONITORING\n\n" +
         "/add <url> - Add a website to monitor\n" +
         "/list - View your registered website\n" +
