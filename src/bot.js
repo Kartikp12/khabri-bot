@@ -16,6 +16,7 @@ const handlePause = require("./pause");
 const handleResume = require("./resume");
 const handleReport = require("./report");
 const handleClear = require("./clear");
+const handleReset = require("./reset");
 
 const token = process.env.BOT_TOKEN;
 
@@ -63,6 +64,7 @@ handlePause(bot);
 handleResume(bot);
 handleReport(bot);
 handleClear(bot);
+handleReset(bot);
 
 bot.on("polling_error", (error) => {
   console.error("Telegram polling error:", error.message);

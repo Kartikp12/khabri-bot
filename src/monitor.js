@@ -35,6 +35,17 @@ function startMonitoring(bot) {
       try {
         const result = await checkWebsite(website.url);
 
+        // Check whether the website still exists
+// It may have been removed while the check was running.
+const stillRegistered = db
+.prepare("SELECT id FROM websites WHERE id = ?")
+.get(website.id);
+
+if (!stillRegistered) {
+console.log(`Skipping deleted website: ${website.url}`);
+continue;
+}
+
         const checkedAt = new Date().toISOString();
 
         db.prepare(`
