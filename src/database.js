@@ -52,30 +52,40 @@ if (!columns.includes("down_since")) {
 }
 
 if (!columns.includes("is_paused")) {
-    db.exec(`
-      ALTER TABLE websites
-      ADD COLUMN is_paused INTEGER NOT NULL DEFAULT 0
-    `);
-  }
-  // Create website monitoring history table
-db.exec(`
-    CREATE TABLE IF NOT EXISTS website_history (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      website_id INTEGER NOT NULL,
-      status TEXT NOT NULL,
-      status_code INTEGER,
-      response_time INTEGER,
-      checked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (website_id)
-        REFERENCES websites(id)
-        ON DELETE CASCADE
-    );
+  db.exec(`
+    ALTER TABLE websites
+    ADD COLUMN is_paused INTEGER NOT NULL DEFAULT 0
   `);
-  
-  console.log("Website history table verified successfully.");
+}
 
+// Create website monitoring history table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS website_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    website_id INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    status_code INTEGER,
+    response_time INTEGER,
+    checked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (website_id)
+      REFERENCES websites(id)
+      ON DELETE CASCADE
+  );
+`);
 
+// Track messages sent by Khabri
+db.exec(`
+  CREATE TABLE IF NOT EXISTS bot_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id TEXT NOT NULL,
+    message_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(chat_id, message_id)
+  );
+`);
 
+console.log("Website history table verified successfully.");
+console.log("Bot messages table verified successfully.");
 console.log("Khabri database connected successfully.");
 console.log("Monitoring columns verified successfully.");
 

@@ -1,7 +1,9 @@
 
 require("dotenv").config();
-require("./database");
+
+const db = require("./database");
 const TelegramBot = require("node-telegram-bot-api");
+
 const handleStart = require("./start");
 const handleHelp = require("./help");
 const handleAbout = require("./about");
@@ -13,8 +15,7 @@ const startMonitoring = require("./monitor");
 const handlePause = require("./pause");
 const handleResume = require("./resume");
 const handleReport = require("./report");
-
-
+const handleClear = require("./clear");
 
 const token = process.env.BOT_TOKEN;
 
@@ -26,7 +27,30 @@ const bot = new TelegramBot(token, {
   polling: true,
 });
 
+// Track every text message sent by the bot
+const originalSendMessage = bot.sendMessage.bind(bot);
+
+bot.sendMessage = async (chatId, text, options) => {
+  const sentMessage = await originalSendMessage(
+    chatId,
+    text,
+    options
+  );
+
+  try {
+    db.prepare(`
+      INSERT OR IGNORE INTO bot_messages (chat_id, message_id)
+      VALUES (?, ?)
+    `).run(String(chatId), sentMessage.message_id);
+  } catch (error) {
+    console.error("Message tracking error:", error.message);
+  }
+
+  return sentMessage;
+};
+
 console.log("Khabri is starting...");
+
 handleStart(bot);
 handleHelp(bot);
 handleAbout(bot);
@@ -38,7 +62,7 @@ startMonitoring(bot);
 handlePause(bot);
 handleResume(bot);
 handleReport(bot);
-
+handleClear(bot);
 
 bot.on("polling_error", (error) => {
   console.error("Telegram polling error:", error.message);
